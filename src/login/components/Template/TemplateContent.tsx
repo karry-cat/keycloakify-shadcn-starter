@@ -16,10 +16,9 @@ import { useI18n } from "../../i18n";
 import { useKcContext } from "../../KcContext";
 import type { TemplateProps } from "./Template";
 
-
 type TemplateContentProps = TemplateProps & {
-    appWhiteModeLogo: string;
-    appDarkModeLogo: string;
+    logoWhiteUrl: string;
+    logoDarkUrl: string;
     cardClassName?: string;
     brandingVisibilityClassName?: string;
 };
@@ -33,8 +32,8 @@ export function TemplateContent(props: TemplateContentProps) {
         socialProvidersNode = null,
         infoNode = null,
         children,
-        appWhiteModeLogo,
-        appDarkModeLogo,
+        logoWhiteUrl,
+        logoDarkUrl,
         cardClassName,
         brandingVisibilityClassName
     } = props;
@@ -44,71 +43,51 @@ export function TemplateContent(props: TemplateContentProps) {
     const { msg, msgStr } = useI18n();
     const { kcClsx } = useKcClsx();
 
+    const titleNode: ReactNode = !(
+        auth !== undefined &&
+        auth.showUsername &&
+        !auth.showResetCredentials
+    ) ? (
+        <h1 className="text-xl">{headerNode}</h1>
+    ) : (
+        <div id="kc-username" className="flex items-center justify-between gap-2">
+            <div className="flex gap-4 items-center">
+                <User className="text-muted-foreground size-6" />
 
-    const titleNode: ReactNode =
-        !(
-            auth !== undefined &&
-            auth.showUsername &&
-            !auth.showResetCredentials
-        ) ? (
-            <h1 className="text-xl">{headerNode}</h1>
-        ) : (
-            <div
-                id="kc-username"
-                className="flex items-center justify-between gap-2"
-            >
-                <div className="flex gap-4 items-center">
-                    <User className="text-muted-foreground size-6" />
-
-                    <div className="flex flex-col gap-0.5">
-                        <span className="text-xs font-normal text-muted-foreground">
-                            {msgStr("attemptedUsernameLoggingInAs")}
-                        </span>
-                        <label
-                            className="font-semibold text-lg"
-                            id="kc-attempted-username"
-                        >
-                            {auth.attemptedUsername}
-                        </label>
-                    </div>
+                <div className="flex flex-col gap-0.5">
+                    <span className="text-xs font-normal text-muted-foreground">
+                        {msgStr("attemptedUsernameLoggingInAs")}
+                    </span>
+                    <label className="font-semibold text-lg" id="kc-attempted-username">
+                        {auth.attemptedUsername}
+                    </label>
                 </div>
-
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                asChild
-                            >
-                                <a
-                                    id="reset-login"
-                                    href={
-                                        url.loginRestartFlowUrl
-                                    }
-                                    aria-label={msgStr(
-                                        "restartLoginTooltip"
-                                    )}
-                                >
-                                    <RotateCcw className="size-4" />
-                                </a>
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>
-                                {msg(
-                                    "restartLoginTooltip"
-                                )}
-                            </p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
             </div>
-        );
+
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="outline" size="icon" asChild>
+                            <a
+                                id="reset-login"
+                                href={url.loginRestartFlowUrl}
+                                aria-label={msgStr("restartLoginTooltip")}
+                            >
+                                <RotateCcw className="size-4" />
+                            </a>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{msg("restartLoginTooltip")}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        </div>
+    );
 
     return (
         <Card className={cardClassName}>
-            <CardHeader >
+            <CardHeader>
                 <div
                     className={cn(
                         "flex flex-col items-center justify-center gap-3",
@@ -116,8 +95,16 @@ export function TemplateContent(props: TemplateContentProps) {
                     )}
                 >
                     <div className="flex items-center gap-3 mb-4 ">
-                        <img src={appWhiteModeLogo} alt="Logo" className='size-14 dark:hidden' />
-                        <img src={appDarkModeLogo} alt="Logo" className='size-14 hidden dark:inline-block' />
+                        <img
+                            src={logoWhiteUrl}
+                            alt="Logo"
+                            className="size-14 dark:hidden"
+                        />
+                        <img
+                            src={logoDarkUrl}
+                            alt="Logo"
+                            className="size-14 hidden dark:inline-block"
+                        />
                         {realm.displayNameHtml ? (
                             <span
                                 className="text-xl"
@@ -126,7 +113,9 @@ export function TemplateContent(props: TemplateContentProps) {
                                 }}
                             />
                         ) : (
-                            <span className="text-xl">{realm.displayName || realm.name}</span>
+                            <span className="text-xl">
+                                {realm.displayName || realm.name}
+                            </span>
                         )}
                     </div>
                 </div>
@@ -174,12 +163,13 @@ export function TemplateContent(props: TemplateContentProps) {
                             method="post"
                         >
                             <div className={kcClsx("kcFormGroupClass")}>
-                                <input
-                                    type="hidden"
-                                    name="tryAnotherWay"
-                                    value="on"
-                                />
-                                <Button type="button" className='w-full' variant="outline" asChild>
+                                <input type="hidden" name="tryAnotherWay" value="on" />
+                                <Button
+                                    type="button"
+                                    className="w-full"
+                                    variant="outline"
+                                    asChild
+                                >
                                     <a
                                         href="#"
                                         id="try-another-way"
@@ -198,9 +188,7 @@ export function TemplateContent(props: TemplateContentProps) {
                         </form>
                     )}
 
-                    {displayInfo && (
-                        <div className="text-center text-sm">{infoNode}</div>
-                    )}
+                    {displayInfo && <div className="text-center text-sm">{infoNode}</div>}
                 </div>
             </CardContent>
         </Card>

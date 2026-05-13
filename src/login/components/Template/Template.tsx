@@ -1,9 +1,8 @@
 import { useKcClsx } from "@keycloakify/login-ui/useKcClsx";
 import { useSetClassName } from "keycloakify/tools/useSetClassName";
-import { RotateCcw, User } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
-import companylogo from "../../assets/img/auth-logo.svg";
+import defaultLogo from "../../assets/img/default-logo.svg";
 import { useI18n } from "../../i18n";
 import { useKcContext } from "../../KcContext";
 import { CenteredCardLayout } from "./layouts/CenteredCardLayout";
@@ -12,7 +11,7 @@ import { TwoColumnLayout } from "./layouts/TwoColumnLayout";
 import { TemplateContent } from "./TemplateContent";
 import { useApplyThemePreset } from "./theme/useApplyThemePreset";
 import { useInitializeTemplate } from "./useInitializeTemplate";
-
+import { resolveAssetUrl } from "@/login/shared/resolveAssetUrl";
 
 export type TemplateProps = {
     displayInfo?: boolean;
@@ -26,8 +25,6 @@ export type TemplateProps = {
     children: ReactNode;
 };
 
-
-
 export function Template(props: TemplateProps) {
     const { documentTitle, bodyClassName } = props;
 
@@ -35,12 +32,15 @@ export function Template(props: TemplateProps) {
     const { msgStr } = useI18n();
     const { kcClsx } = useKcClsx();
 
-    const appWhiteModeLogo = kcContext.properties.SHADCN_THEME_LOGO_WHITE_URL || companylogo;
-    const appDarkModeLogo = kcContext.properties.SHADCN_THEME_LOGO_DARK_URL || companylogo;
-    const layout = kcContext.properties.SHADCN_THEME_LAYOUT;
+    const logoWhiteUrl =
+        resolveAssetUrl(kcContext.properties.SHADCN_THEME_LOGO_WHITE_URL) || defaultLogo;
 
-    const sideImageUrl =
-        kcContext.properties.SHADCN_THEME_SIDE_IMAGE_URL || undefined;
+    const logoDarkUrl =
+        resolveAssetUrl(kcContext.properties.SHADCN_THEME_LOGO_DARK_URL) || defaultLogo;
+    const sideImageUrl = resolveAssetUrl(
+        kcContext.properties.SHADCN_THEME_SIDE_IMAGE_URL
+    );
+    const layout = kcContext.properties.SHADCN_THEME_LAYOUT;
 
     useEffect(() => {
         document.title =
@@ -68,8 +68,8 @@ export function Template(props: TemplateProps) {
                     content={
                         <TemplateContent
                             {...props}
-                            appWhiteModeLogo={appWhiteModeLogo}
-                            appDarkModeLogo={appDarkModeLogo}
+                            logoWhiteUrl={logoWhiteUrl}
+                            logoDarkUrl={logoDarkUrl}
                             cardClassName="border bg-card shadow-sm"
                         />
                     }
@@ -81,8 +81,8 @@ export function Template(props: TemplateProps) {
                     content={
                         <TemplateContent
                             {...props}
-                            appWhiteModeLogo={appWhiteModeLogo}
-                            appDarkModeLogo={appDarkModeLogo}
+                            logoWhiteUrl={logoWhiteUrl}
+                            logoDarkUrl={logoDarkUrl}
                             brandingVisibilityClassName="md:hidden"
                             cardClassName="border-none bg-transparent shadow-sm h-full"
                         />
@@ -97,13 +97,13 @@ export function Template(props: TemplateProps) {
                     content={
                         <TemplateContent
                             {...props}
-                            appWhiteModeLogo={appWhiteModeLogo}
-                            appDarkModeLogo={appDarkModeLogo}
+                            logoWhiteUrl={logoWhiteUrl}
+                            logoDarkUrl={logoDarkUrl}
                             brandingVisibilityClassName="lg:hidden"
                             cardClassName="border-0 shadow-none bg-transparent md:border md:bg-card md:shadow-sm"
                         />
                     }
-                    appLogo={appDarkModeLogo}
+                    logoUrl={logoDarkUrl}
                 />
             );
     }

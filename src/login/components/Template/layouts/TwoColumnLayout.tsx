@@ -1,21 +1,16 @@
-import { useI18n } from '@/login/i18n';
-import { useKcContext } from '@/login/KcContext';
-import { kcSanitize } from '@keycloakify/login-ui/kcSanitize';
+import { useI18n } from "@/login/i18n";
+import { useKcContext } from "@/login/KcContext";
+import { kcSanitize } from "@keycloakify/login-ui/kcSanitize";
 import type { ReactNode } from "react";
 import shape from "../../../assets/img/shape.svg";
-import { TemplateTopBar } from '../TemplateTopBar';
+import { TemplateTopBar } from "../TemplateTopBar";
 
-
-export function TwoColumnLayout(props: {
-    content: ReactNode;
-    appLogo: string;
-}) {
-    const { content, appLogo } = props;
+export function TwoColumnLayout(props: { content: ReactNode; logoUrl: string }) {
+    const { content, logoUrl } = props;
 
     const { kcContext } = useKcContext();
 
     const { msg } = useI18n();
-
 
     return (
         <div className="grid min-h-svh lg:grid-cols-2 ">
@@ -38,16 +33,20 @@ export function TwoColumnLayout(props: {
 
                     <div className="relative z-10 flex max-w-xs flex-col items-center justify-center text-center">
                         <div className="mb-4 flex items-center gap-3">
-                            <img src={appLogo} alt="Logo" className='size-14' />
+                            <img src={logoUrl} alt="Logo" className="size-14" />
                             {kcContext.realm.displayNameHtml ? (
                                 <span
-                                    className="text-xl text-whit"
+                                    className="text-xl text-white"
                                     dangerouslySetInnerHTML={{
-                                        __html: kcSanitize(kcContext.realm.displayNameHtml)
+                                        __html: kcSanitize(
+                                            kcContext.realm.displayNameHtml
+                                        )
                                     }}
                                 />
                             ) : (
-                                <span className="text-xl text-whit">{kcContext.realm.displayName || kcContext.realm.name}</span>
+                                <span className="text-xl text-white">
+                                    {kcContext.realm.displayName || kcContext.realm.name}
+                                </span>
                             )}
                         </div>
 
